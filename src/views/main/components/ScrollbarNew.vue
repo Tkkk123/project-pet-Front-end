@@ -22,7 +22,7 @@ onMounted(async () => {
                             <router-link to="/">
                                 <div class="card">
                                     <i class="iconfont icon-03DMS_cuxiaoguanli" v-if="item.discount"></i>
-                                    <img :src="item.picture" alt="">
+                                    <img v-lazy="item.picture" alt="">
                                     <p>{{ item.name }}</p>
                                     <i class="iconfont icon-renminbi">{{ item.price }}元</i>
                                 </div>

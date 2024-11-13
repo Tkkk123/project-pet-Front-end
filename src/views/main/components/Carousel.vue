@@ -7,9 +7,7 @@
     </el-carousel>
 </template>
 
-<script setup lang='ts'>
 
-</script>
 
 <style scoped lang="less">
 .el-carousel {

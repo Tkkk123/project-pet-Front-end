@@ -14,13 +14,11 @@ const categoryList = categoryStore.categoryList; // 引用 Pinia store 中的数
     <Panel v-for="cate in categoryList.slice(0, 2)" :key="cate.id" :title="cate.name" :subTitle="cate.subName">
       <div class="box">
         <RouterLink class="cover" to="/">
-          <img :src="cate.picture" />
+          <img v-lazy="cate.picture" />
         </RouterLink>
         <ul class="goods-list">
           <li v-for="card in cate.children.slice(0, 8)" :key="card.id">
-
             <Card :cards="card" />
-
           </li>
         </ul>
       </div>

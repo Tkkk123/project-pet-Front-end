@@ -20,7 +20,7 @@
                     <div class="goods-info">
                         <div class="media">
                             <!-- 图片预览区，增加骨架屏 -->
-                            <div v-if="!children.picture" class="skeleton-loader">
+                            <div v-if="!children && !randomList" class="skeleton-loader">
                                 <!-- 占位符加载 -->
                                 <div class="skeleton-image">加载中....</div>
                             </div>
@@ -100,14 +100,14 @@
                     </div>
 
                     <!-- 商品详情 -->
-                    <div class="goods-footer" v-if="children.picture && randomList">
+                    <div class="goods-footer" v-if="children && randomList">
                         <div class="goods-article">
                             <div class="goods-tabs">
                                 <nav>
                                     <a>商品详情</a>
                                 </nav>
                                 <div class="goods-detail" v-for="(img, index) in images" :key="index">
-                                    <img :src="imagePaths(img.src)" alt="123" loading="lazy" />
+                                    <img v-lazy="imagePaths(img.src)" alt="123" />
                                 </div>
                             </div>
                         </div>
@@ -127,20 +127,20 @@ import { ElMessage } from "element-plus";
 import { useCartStore } from "@/stores/cartStore";
 import Sku from "@/components/Sku/index.vue";
 
-
 const cartStore = useCartStore();
 const route = useRoute();
 const goods = ref({});
 const children = reactive({});
 const randomList = RandomList();
 const matchData = reactive({});
+
 const images = [
     { src: "商品详情1.webp", alt: "商品1" },
     { src: "商品详情2.webp", alt: "商品2" },
     { src: "商品详情3.webp", alt: "商品3" },
 ];
 const getGoods = async () => {
-
+    //接口设计问题，实际获取的是全部数据，并不是单个宠物数据
     const res = await getCategoryAPI(route.params.id); //获取对应id的宠物数据
 
     const dataWithChildren = res.data.filter((item) => item.children); //过滤出children
@@ -189,25 +189,27 @@ onMounted(() => {
 const ifData = computed(() => {
     return {
         ifmatchDataName:
-            children.picture && randomList ? matchData.name : "加载中...",
+            children && randomList ? matchData.name : "加载中...",
         ifchildrenDataName:
-            children.picture && randomList ? children.name : "加载中...",
+            children && randomList ? children.name : "加载中...",
         ifrandomList1:
-            children.picture && randomList ? randomList.Number1 : "加载中...",
+            children && randomList ? randomList.Number1 : "加载中...",
         ifrandomList2:
-            children.picture && randomList ? randomList.Number2 : "加载中...",
+            children && randomList ? randomList.Number2 : "加载中...",
         ifrandomList3:
-            children.picture && randomList ? randomList.Number3 : "加载中...",
-        ifadd: children.picture && randomList ? "+" : "",
+            children && randomList ? randomList.Number3 : "加载中...",
+        ifadd: children && randomList ? "+" : "",
         ifPrice:
-            children.picture && randomList
+            children && randomList
                 ? randomList.OldPrice + children.price
                 : "加载中...",
     };
 });
+
 const imagePaths = (name) => {
     return new URL(`../../assets/${name}`, import.meta.url).href;
 };
+
 </script>
 
 <style scoped lang="less">
