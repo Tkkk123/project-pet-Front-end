@@ -1,6 +1,13 @@
 <script setup>
+import { onMounted } from 'vue'
 import { useCategoryStore } from '@/stores/Category'
 const categoryStore = useCategoryStore()
+const categoryList = categoryStore.categoryList;
+onMounted(async () => {
+  if (categoryList.length === 0) {
+    await categoryStore.getCategory(); // 调用 store 中的方法获取数据
+  }
+})
 </script>
 
 <template>

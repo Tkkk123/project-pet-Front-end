@@ -1,12 +1,12 @@
 <script setup>
-import { getCheckInfoAPI, createOrderAPI } from '@/apis/checkout'
+import { getCheckInfoAPI } from '@/apis/checkout'
 import { useRouter, useRoute } from 'vue-router'
 import { onMounted, ref, reactive, } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
 import { useAddressStore } from '@/stores/Address'
 import { useUserStore } from '@/stores/userStore'
 import { ElMessage } from 'element-plus'
-const userStore = useUserStore()
+
 const addressStore = useAddressStore();
 
 const router = useRouter()
@@ -74,18 +74,28 @@ const switchAddress = (item) => {
   showDialog.value = false
 }
 const createOrder = () => {
-  if (!userStore.userInfo.token) {
-    ElMessage({ type: 'warning', message: ('请先登录') })
-    router.push({
-      path: '/login',
+  const userStore = useUserStore()
+  if (userStore.userInfo.token) {
+    ElMessage({
+      type: 'success',
+      message: '下单成功！'
     })
-  } else {
     router.push({
       path: '/pay',
     })
-    const CardStore = useCartStore()
-    CardStore.clearCart()
+  } else {
+    ElMessage({
+      type: 'warning',
+      message: '请先登录！'
+    })
+    router.push({
+      path: '/login',
+    })
   }
+
+  const CardStore = useCartStore()
+  CardStore.clearCart()
+
 
 }
 

@@ -29,7 +29,7 @@ const props = defineProps({
 
 const { goods } = toRefs(props);
 
-const skuValues = ref(Array(goods.value.length).fill('')); // Initialize skuValues array
+const skuValues = ref(Array(goods.value.length).fill(''));
 
 const emit = defineEmits(['change']);
 

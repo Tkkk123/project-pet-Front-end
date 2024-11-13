@@ -1,38 +1,33 @@
 <script setup>
 import Panel from './Panel.vue';
 import Card from './Card.vue';
-import { onMounted, reactive, ref } from 'vue';
-import { getCategoryAPI } from '@/apis/category'
-const name = ref('')
-const categoryList = reactive([])
-onMounted(async () => {
-  const res = await getCategoryAPI();  //调用api获取数据
-  name.value = res.name;
+import { useCategoryStore } from '@/stores/Category';
 
-  const { data } = res    //解构data
-  categoryList.push(...data.slice(0, 2))  //添加挑选狗狗和挑选猫猫数据
-});
+const categoryStore = useCategoryStore();
+const categoryList = categoryStore.categoryList; // 引用 Pinia store 中的数据
+
 
 </script>
 
 <template>
   <div class="home-product">
-    <!--进行数据渲染   Panel组件渲染主标题和副标题-->
-    <Panel :title="cate.name" :subTitle="cate.subName" v-for="cate in categoryList " :key="cate.id">
+    <Panel v-for="cate in categoryList.slice(0, 2)" :key="cate.id" :title="cate.name" :subTitle="cate.subName">
       <div class="box">
         <RouterLink class="cover" to="/">
           <img :src="cate.picture" />
         </RouterLink>
         <ul class="goods-list">
           <li v-for="card in cate.children.slice(0, 8)" :key="card.id">
-            <!-- card组件传入子对象 -->
+
             <Card :cards="card" />
+
           </li>
         </ul>
       </div>
     </Panel>
   </div>
 </template>
+
 
 <style scoped lang='less'>
 .home-product {

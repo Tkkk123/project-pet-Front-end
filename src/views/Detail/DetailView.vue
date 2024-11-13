@@ -1,58 +1,3 @@
-<script setup>
-import { getCategoryAPI, RandomList } from '@/apis/detail'
-import { useRoute } from 'vue-router'
-import { onMounted, reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus'
-import { useCartStore } from '@/stores/cartStore'
-import Sku from '@/components/Sku/index.vue'
-const cartStore = useCartStore()
-const route = useRoute()
-const goods = ref({})
-const children = reactive({})
-const randomList = RandomList()
-const matchData = reactive({})
-const getGoods = async () => {
-    const res = await getCategoryAPI(route.params.id)  //获取对应id的宠物数据
-    const dataWithChildren = res.data.filter(item => item.children) //过滤出children
-    //找到与宠物id对应的children模块
-    const data = dataWithChildren.find(item => item.children.some(child => child.id === route.params.id))
-    Object.assign(matchData, data)
-    goods.value = matchData.children.find(item => item.id === route.params.id)
-    //合并对象进行面包屑渲染
-    Object.assign(children, goods.value)
-}
-let skuObj = {}
-const skuChange = (sku) => {
-    skuObj = sku //接收sku组件传出的数据
-}
-const addCart = () => {
-    if (skuObj.sex && skuObj.color) { //确认规格全选
-        cartStore.addCart({   //将全部数据将入
-            id: goods.value.id,
-            name: goods.value.name,
-            picture: goods.value.picture,
-            price: goods.value.price,
-            count: count.value,
-            sex: skuObj.sex,
-            color: skuObj.color
-        })
-    } else {
-        ElMessage.warning('请选择规格')
-    }
-}
-const count = ref(1)
-const countChange = (value) => {
-    if (value < 1) {
-        count.value = 1;
-    } else {
-        count.value = value;
-    }
-};
-onMounted(() => {
-    getGoods()
-})
-</script>
-
 <template>
     <div class="xtx-goods-page">
         <div class="container">
@@ -60,51 +5,68 @@ onMounted(() => {
                 <el-breadcrumb separator=">">
                     <el-breadcrumb-item to="/">首页</el-breadcrumb-item>
                     <el-breadcrumb-item to="/">
-                        {{ matchData.name }}
+                        {{ ifData.ifmatchDataName }}
                     </el-breadcrumb-item>
+
                     <el-breadcrumb-item to="/">
-                        {{ children.name }}
+                        {{ ifData.ifchildrenDataName }}
                     </el-breadcrumb-item>
                 </el-breadcrumb>
             </div>
+
             <!-- 商品信息 -->
             <div class="info-container">
                 <div>
                     <div class="goods-info">
                         <div class="media">
-                            <!-- 图片预览区 -->
-                            <img :src="children.picture" alt="">
+                            <!-- 图片预览区，增加骨架屏 -->
+                            <div v-if="!children.picture" class="skeleton-loader">
+                                <!-- 占位符加载 -->
+                                <div class="skeleton-image">加载中....</div>
+                            </div>
+                            <img v-else :src="children.picture" alt="" class="product-image" />
+
                             <!-- 统计数量 -->
                             <ul class="goods-sales">
                                 <li>
                                     <p>销量人气</p>
-                                    <p> {{ randomList.Number1 }}+ </p>
+                                    <p>
+                                        {{ ifData.ifrandomList1 }}
+                                        {{ ifData.ifadd }}
+                                    </p>
+
                                     <p><i class="iconfont icon-task-filling"></i>销量人气</p>
                                 </li>
                                 <li>
                                     <p>商品评价</p>
-                                    <p>{{ randomList.Number2 }}+</p>
+                                    <p>{{ ifData.ifrandomList2 }} {{ ifData.ifadd }}</p>
+
                                     <p><i class="iconfont icon-comment-filling"></i>查看评价</p>
                                 </li>
                                 <li>
                                     <p>收藏人气</p>
-                                    <p>{{ randomList.Number3 }}+</p>
+                                    <p>{{ ifData.ifrandomList3 }} {{ ifData.ifadd }}</p>
+
                                     <p><i class="iconfont icon-favorite-filling"></i>收藏商品</p>
                                 </li>
                                 <li>
                                     <p>剩余宠物</p>
-                                    <p v-if="children">{{ children.orderNum }}+</p>
+                                    <p v-if="children.picture && children.orderNum">
+                                        {{ children.orderNum }}+
+                                    </p>
+                                    <p v-else-if="!children.picture">加载中....</p>
                                     <p v-else>{{ randomList.Number4 }}+</p>
                                     <p><i class="iconfont icon-dynamic-filling"></i>剩余数量</p>
                                 </li>
                             </ul>
                         </div>
+
                         <div class="spec">
                             <!-- 商品信息区 -->
-                            <p class="g-name"> {{ children.name }} </p>
+                            <p class="g-name">{{ children.name }}</p>
                             <p class="g-price">
-                                <span>{{ children.price }}</span>
-                                <span>{{ randomList.OldPrice + children.price }}</span>
+                                <span v-show="children.picture">{{ children.price }}</span>
+                                <span>{{ ifData.ifPrice }}</span>
                             </p>
                             <div class="g-service">
                                 <dl>
@@ -130,32 +92,24 @@ onMounted(() => {
                                 <el-button size="large" class="btn" @click="addCart">
                                     加入购物车
                                 </el-button>
+                                <el-button size="large" class="btn" @click="$router.push('/cartlist')">
+                                    去购物车结算
+                                </el-button>
                             </div>
-
                         </div>
                     </div>
-                    <div class="goods-footer">
-                        <div class="goods-article">
 
+                    <!-- 商品详情 -->
+                    <div class="goods-footer" v-if="children.picture && randomList">
+                        <div class="goods-article">
                             <div class="goods-tabs">
                                 <nav>
                                     <a>商品详情</a>
                                 </nav>
-                                <div class="goods-detail">
-                                    <img src="@/assets/商品详情1.webp" alt="">
-                                    <img src="@/assets/商品详情2.webp" alt="">
-                                    <img src="@/assets/商品详情3.webp" alt="">
-                                    <img src="@/assets/商品详情4.webp" alt="">
-                                    <img src="@/assets/商品详情5.webp" alt="">
-                                    <img src="@/assets/商品详情6.webp" alt="">
-                                    <img src="@/assets/商品详情7.webp" alt="">
-                                    <img src="@/assets/商品详情8.webp" alt="">
+                                <div class="goods-detail" v-for="(img, index) in images" :key="index">
+                                    <img :src="imagePaths(img.src)" alt="123" loading="lazy" />
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="goods-aside">
-
                         </div>
                     </div>
                 </div>
@@ -164,22 +118,109 @@ onMounted(() => {
     </div>
 </template>
 
+<script setup>
+import { RandomList } from "@/apis/detail";
+import { getCategoryAPI } from "@/apis/category";
+import { useRoute } from "vue-router";
+import { onMounted, reactive, ref, computed } from "vue";
+import { ElMessage } from "element-plus";
+import { useCartStore } from "@/stores/cartStore";
+import Sku from "@/components/Sku/index.vue";
 
-<style scoped lang='less'>
+
+const cartStore = useCartStore();
+const route = useRoute();
+const goods = ref({});
+const children = reactive({});
+const randomList = RandomList();
+const matchData = reactive({});
+const images = [
+    { src: "商品详情1.webp", alt: "商品1" },
+    { src: "商品详情2.webp", alt: "商品2" },
+    { src: "商品详情3.webp", alt: "商品3" },
+];
+const getGoods = async () => {
+
+    const res = await getCategoryAPI(route.params.id); //获取对应id的宠物数据
+
+    const dataWithChildren = res.data.filter((item) => item.children); //过滤出children
+    //找到与宠物id对应的children模块
+    const data = dataWithChildren.find((item) =>
+        item.children.some((child) => child.id === route.params.id)
+    );
+    Object.assign(matchData, data);
+    goods.value = matchData.children.find((item) => item.id === route.params.id);
+    //合并对象进行面包屑渲染
+    Object.assign(children, goods.value);
+};
+let skuObj = {};
+const skuChange = (sku) => {
+    skuObj = sku; //接收sku组件传出的数据
+};
+const addCart = () => {
+    if (skuObj.sex && skuObj.color) {
+        //确认规格全选
+        cartStore.addCart({
+            //将全部数据将入
+            id: goods.value.id,
+            name: goods.value.name,
+            picture: goods.value.picture,
+            price: goods.value.price,
+            count: count.value,
+            sex: skuObj.sex,
+            color: skuObj.color,
+        });
+        ElMessage.success("加入成功！");
+    } else {
+        ElMessage.warning("请选择规格");
+    }
+};
+const count = ref(1);
+const countChange = (value) => {
+    if (value < 1) {
+        count.value = 1;
+    } else {
+        count.value = value;
+    }
+};
+onMounted(() => {
+    getGoods();
+});
+const ifData = computed(() => {
+    return {
+        ifmatchDataName:
+            children.picture && randomList ? matchData.name : "加载中...",
+        ifchildrenDataName:
+            children.picture && randomList ? children.name : "加载中...",
+        ifrandomList1:
+            children.picture && randomList ? randomList.Number1 : "加载中...",
+        ifrandomList2:
+            children.picture && randomList ? randomList.Number2 : "加载中...",
+        ifrandomList3:
+            children.picture && randomList ? randomList.Number3 : "加载中...",
+        ifadd: children.picture && randomList ? "+" : "",
+        ifPrice:
+            children.picture && randomList
+                ? randomList.OldPrice + children.price
+                : "加载中...",
+    };
+});
+const imagePaths = (name) => {
+    return new URL(`../../assets/${name}`, import.meta.url).href;
+};
+</script>
+
+<style scoped lang="less">
 .xtx-goods-page {
     width: 1240px;
     margin: 0 auto;
 
     .goods-info {
-
         background: #fff;
         display: flex;
         justify-content: space-around;
 
         .media {
-            // padding: 20px;
-
-
             img {
                 width: 500px;
             }
@@ -407,10 +448,38 @@ onMounted(() => {
 
 .btn {
     margin-top: 20px;
-
 }
 
 .bread-container {
     padding: 25px 0;
+}
+
+/* 骨架屏样式 */
+.skeleton-loader {
+    background-color: #f0f0f0;
+    height: 200px;
+    width: 100%;
+    animation: loading 1.5s infinite linear;
+}
+
+.skeleton-image {
+    background-color: #ccc;
+    width: 100%;
+    height: 100%;
+}
+
+@keyframes loading {
+    0% {
+        background-position: -200px 0;
+    }
+
+    100% {
+        background-position: 200px 0;
+    }
+}
+
+.product-image {
+    width: 100%;
+    height: auto;
 }
 </style>

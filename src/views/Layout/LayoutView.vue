@@ -9,10 +9,6 @@
 import HeaderView from './components/HeaderView.vue';
 import NavView from './components/NavView.vue';
 import FooterView from './components/FooterView.vue';
-import { useCategoryStore } from '@/stores/Category'
-import { onMounted } from 'vue';
-const categoryStore = useCategoryStore()
-onMounted(() => categoryStore.getCategory())
 </script>
 
 <style lang="less">
