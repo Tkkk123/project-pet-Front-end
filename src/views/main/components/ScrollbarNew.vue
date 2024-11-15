@@ -1,23 +1,21 @@
 <script setup>
-import { ScrollbarNewApi } from '@/apis/new'
-import { onMounted, reactive, ref } from 'vue';
+import { NewStore } from '@/stores/NewStore'
+import { onMounted } from 'vue';
 import Panel from './Panel.vue';
-const title = ref('');
-const subtitle = ref('');
-const NewList = reactive([])
-onMounted(async () => {
-    const res = await ScrollbarNewApi();
-    title.value = res.title;
-    subtitle.value = res.subtitle;
-    NewList.push(...res.data)
+const getNew = NewStore()
+onMounted(() => {
+    if (getNew.NewList.length === 0) {
+        getNew.getNew();
+    }
+
 });
 </script>
 <template>
     <div class="container">
-        <Panel :title="title" :subTitle="subtitle">
+        <Panel :title="getNew.title" :subTitle="getNew.subtitle">
             <el-scrollbar>
                 <div class="scrollbar-flex-content">
-                    <ul v-for="item in NewList" :key="item.id" class="scrollbar-demo-item">
+                    <ul v-for="item in getNew.NewList" :key="item.id" class="scrollbar-demo-item">
                         <li>
                             <router-link to="/">
                                 <div class="card">

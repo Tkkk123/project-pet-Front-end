@@ -8,7 +8,7 @@ const userStore = useUserStore()
     <!-- 用户信息 -->
     <div class="user-meta">
       <div class="avatar">
-        <img :src="userStore.userInfo.avatar" />
+        <img v-lazy="userStore.userInfo.avatar" />
       </div>
       <h4>{{ userStore.userInfo?.account }}</h4>
     </div>

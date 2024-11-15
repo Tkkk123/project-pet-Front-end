@@ -20,7 +20,7 @@
                     <div class="goods-info">
                         <div class="media">
                             <!-- 图片预览区，增加骨架屏 -->
-                            <div v-if="!children && !randomList" class="skeleton-loader">
+                            <div v-if="!children.picture" class="skeleton-loader">
                                 <!-- 占位符加载 -->
                                 <div class="skeleton-image">加载中....</div>
                             </div>
@@ -120,13 +120,14 @@
 
 <script setup>
 import { RandomList } from "@/apis/detail";
-import { getCategoryAPI } from "@/apis/category";
 import { useRoute } from "vue-router";
 import { onMounted, reactive, ref, computed } from "vue";
 import { ElMessage } from "element-plus";
 import { useCartStore } from "@/stores/cartStore";
 import Sku from "@/components/Sku/index.vue";
-
+import { useCategoryStore } from '@/stores/Category';
+const categoryStore = useCategoryStore();
+// 引用 Pinia store 中的数据
 const cartStore = useCartStore();
 const route = useRoute();
 const goods = ref({});
@@ -141,9 +142,14 @@ const images = [
 ];
 const getGoods = async () => {
     //接口设计问题，实际获取的是全部数据，并不是单个宠物数据
-    const res = await getCategoryAPI(route.params.id); //获取对应id的宠物数据
-
-    const dataWithChildren = res.data.filter((item) => item.children); //过滤出children
+    const categoryList = categoryStore.categoryList;
+    if (categoryList.length === 0) {
+        // 如果 categoryList 为空，返回
+        console.log('categoryList 数据为空，请等待数据加载');
+        return;
+    }
+    const dataWithChildren = categoryList.filter((item) => item.children); //过滤出children
+    console.log(dataWithChildren);
     //找到与宠物id对应的children模块
     const data = dataWithChildren.find((item) =>
         item.children.some((child) => child.id === route.params.id)
@@ -189,18 +195,18 @@ onMounted(() => {
 const ifData = computed(() => {
     return {
         ifmatchDataName:
-            children && randomList ? matchData.name : "加载中...",
+            children.picture && randomList ? matchData.name : "加载中...",
         ifchildrenDataName:
-            children && randomList ? children.name : "加载中...",
+            children.picture && randomList ? children.name : "加载中...",
         ifrandomList1:
-            children && randomList ? randomList.Number1 : "加载中...",
+            children.picture && randomList ? randomList.Number1 : "加载中...",
         ifrandomList2:
-            children && randomList ? randomList.Number2 : "加载中...",
+            children.picture && randomList ? randomList.Number2 : "加载中...",
         ifrandomList3:
-            children && randomList ? randomList.Number3 : "加载中...",
-        ifadd: children && randomList ? "+" : "",
+            children.picture && randomList ? randomList.Number3 : "加载中...",
+        ifadd: children.picture && randomList ? "+" : "",
         ifPrice:
-            children && randomList
+            children.picture && randomList
                 ? randomList.OldPrice + children.price
                 : "加载中...",
     };
@@ -462,6 +468,7 @@ const imagePaths = (name) => {
     height: 200px;
     width: 100%;
     animation: loading 1.5s infinite linear;
+
 }
 
 .skeleton-image {
