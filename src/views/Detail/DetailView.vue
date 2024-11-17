@@ -125,8 +125,7 @@ import { onMounted, reactive, ref, computed } from "vue";
 import { ElMessage } from "element-plus";
 import { useCartStore } from "@/stores/cartStore";
 import Sku from "@/components/Sku/index.vue";
-import { useCategoryStore } from '@/stores/Category';
-const categoryStore = useCategoryStore();
+import { getCategoryAPI } from "@/apis/category";
 // 引用 Pinia store 中的数据
 const cartStore = useCartStore();
 const route = useRoute();
@@ -142,19 +141,13 @@ const images = [
 ];
 const getGoods = async () => {
     //接口设计问题，实际获取的是全部数据，并不是单个宠物数据
-    const categoryList = categoryStore.categoryList;
-    if (categoryList.length === 0) {
-        // 如果 categoryList 为空，返回
-        console.log('categoryList 数据为空，请等待数据加载');
-        return;
-    }
-    const dataWithChildren = categoryList.filter((item) => item.children); //过滤出children
-    console.log(dataWithChildren);
+    const { data } = await getCategoryAPI();
+    const dataWithChildren = data.filter((item) => item.children); //过滤出children
     //找到与宠物id对应的children模块
-    const data = dataWithChildren.find((item) =>
+    const datas = dataWithChildren.find((item) =>
         item.children.some((child) => child.id === route.params.id)
     );
-    Object.assign(matchData, data);
+    Object.assign(matchData, datas);
     goods.value = matchData.children.find((item) => item.id === route.params.id);
     //合并对象进行面包屑渲染
     Object.assign(children, goods.value);

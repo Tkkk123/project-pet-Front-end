@@ -2,6 +2,7 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/stores/userStore";
+import { hideLoading, showLoading } from "@/loading/loading";
 const request = axios.create({
   baseURL: "https://apifoxmock.com/m1/4022804-3659542-default",
   timeout: 5000, // 设置请求超时时间
@@ -9,25 +10,28 @@ const request = axios.create({
 
 request.interceptors.request.use(
   (config) => {
-    console.log(config.url);
-    // 1. 从pinia获取token数据
+    showLoading();
     const userStore = useUserStore();
-    // 2. 按照后端的要求拼接token数据
     const token = userStore.userInfo.token;
     if (token) {
       config.headers.Authorization = token;
     }
     return config;
   },
-  (e) => Promise.reject(e)
+  (e) => {
+    hideLoading();
+    Promise.reject(e);
+  }
 );
 
 // axios 响应拦截器
 request.interceptors.response.use(
   (response) => {
+    hideLoading();
     return response.data;
   },
   (error) => {
+    hideLoading();
     useErrorHandler(error);
     return Promise.reject(error);
   }
