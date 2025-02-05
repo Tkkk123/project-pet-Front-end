@@ -1,7 +1,8 @@
 <template>
-    <!-- card组件模块 -->
+    <!-- card组件模块，渲染宠物数据卡片 -->
     <RouterLink :to="`/detail/${cards.id}`" class="card">
-        <i class="iconfont icon-03DMS_cuxiaoguanli" v-if="cards.discount"></i> <!-- 判断是否有折扣进行图标渲染 -->
+        <!-- 判断是否有折扣进行图标渲染 -->
+        <i class="iconfont icon-03DMS_cuxiaoguanli" v-if="cards.discount"></i>
         <img :src="cards.picture" alt="">
         <p>{{ cards.name }}</p>
         <i class="iconfont icon-renminbi">{{ cards.price }}元</i>
@@ -11,7 +12,7 @@
 
 <script setup>
 import { defineProps } from 'vue';
-
+//接收父组件数据
 defineProps({
     cards: {
         type: Object,

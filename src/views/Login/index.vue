@@ -9,7 +9,7 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 
 const userStore = useUserStore()
-
+//默认数据
 const form = ref({
   account: '周杰伦',
   password: '123456',

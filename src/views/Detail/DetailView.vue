@@ -2,12 +2,12 @@
     <div class="xtx-goods-page">
         <div class="container">
             <div class="bread-container">
+                <!-- 左上角面包屑 -->
                 <el-breadcrumb separator=">">
                     <el-breadcrumb-item to="/">首页</el-breadcrumb-item>
                     <el-breadcrumb-item to="/">
                         {{ ifData.ifmatchDataName }}
                     </el-breadcrumb-item>
-
                     <el-breadcrumb-item to="/">
                         {{ ifData.ifchildrenDataName }}
                     </el-breadcrumb-item>
@@ -30,11 +30,7 @@
                             <ul class="goods-sales">
                                 <li>
                                     <p>销量人气</p>
-                                    <p>
-                                        {{ ifData.ifrandomList1 }}
-                                        {{ ifData.ifadd }}
-                                    </p>
-
+                                    <p>{{ ifData.ifrandomList1 }}{{ ifData.ifadd }}</p>
                                     <p><i class="iconfont icon-task-filling"></i>销量人气</p>
                                 </li>
                                 <li>
@@ -107,6 +103,7 @@
                                     <a>商品详情</a>
                                 </nav>
                                 <div class="goods-detail" v-for="(img, index) in images" :key="index">
+                                    <!-- 引入v-lazy图片懒加载指令，加载静态资源图片 -->
                                     <img v-lazy="imagePaths(img.src)" alt="123" />
                                 </div>
                             </div>
@@ -133,12 +130,12 @@ const goods = ref({});
 const children = reactive({});
 const randomList = RandomList();
 const matchData = reactive({});
-
 const images = [
     { src: "商品详情1.webp", alt: "商品1" },
     { src: "商品详情2.webp", alt: "商品2" },
     { src: "商品详情3.webp", alt: "商品3" },
 ];
+//用户选中某个宠物跳转页面后执行
 const getGoods = async () => {
     //接口设计问题，实际获取的是全部数据，并不是单个宠物数据
     const { data } = await getCategoryAPI();
@@ -147,6 +144,7 @@ const getGoods = async () => {
     const datas = dataWithChildren.find((item) =>
         item.children.some((child) => child.id === route.params.id)
     );
+    //数据合并
     Object.assign(matchData, datas);
     goods.value = matchData.children.find((item) => item.id === route.params.id);
     //合并对象进行面包屑渲染
@@ -157,10 +155,11 @@ const skuChange = (sku) => {
     skuObj = sku; //接收sku组件传出的数据
 };
 const addCart = () => {
+    //点击加入购物车执行的操作
     if (skuObj.sex && skuObj.color) {
         //确认规格全选
         cartStore.addCart({
-            //将全部数据将入
+            //将全部数据加入
             id: goods.value.id,
             name: goods.value.name,
             picture: goods.value.picture,
@@ -186,6 +185,9 @@ onMounted(() => {
     getGoods();
 });
 const ifData = computed(() => {
+    //computed数据缓存，节约性能消耗
+    //通过判断商品数据是否获取完毕来选择加载数据还是显示骨架屏
+    //销量人气，商品评价，收藏人气，剩余宠物均为随机数模拟数据
     return {
         ifmatchDataName:
             children.picture && randomList ? matchData.name : "加载中...",

@@ -7,8 +7,6 @@
     </el-carousel>
 </template>
 
-
-
 <style scoped lang="less">
 .el-carousel {
     position: absolute;

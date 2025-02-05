@@ -4,7 +4,7 @@ import { onMounted } from 'vue';
 import Panel from './Panel.vue';
 const getNew = NewStore()
 onMounted(() => {
-    if (getNew.NewList.length === 0) {
+    if (getNew.NewList.length === 0) { //热门宠物数据初始化
         getNew.getNew();
     }
 
@@ -12,13 +12,15 @@ onMounted(() => {
 </script>
 <template>
     <div class="container">
-        <Panel :title="getNew.title" :subTitle="getNew.subtitle">
-            <el-scrollbar>
+        <Panel :title="getNew.title" :subTitle="getNew.subtitle"> <!-- Panel组件传入主标题和副标题 -->
+            <el-scrollbar> <!-- element ui 滚动条 -->
                 <div class="scrollbar-flex-content">
+                    <!-- 滚动条宠物数据渲染 -->
                     <ul v-for="item in getNew.NewList" :key="item.id" class="scrollbar-demo-item">
                         <li>
                             <router-link to="/">
                                 <div class="card">
+                                    <!-- item.discount有折扣右上角出现促销图标 -->
                                     <i class="iconfont icon-03DMS_cuxiaoguanli" v-if="item.discount"></i>
                                     <img v-lazy="item.picture" alt="">
                                     <p>{{ item.name }}</p>
@@ -36,8 +38,6 @@ onMounted(() => {
 <style scoped lang="less">
 .container {
     margin-top: 20px;
-
-
 
     .scrollbar-flex-content {
         display: flex;

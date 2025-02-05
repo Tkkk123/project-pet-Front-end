@@ -2,9 +2,9 @@
 import { onMounted } from 'vue'
 import { useCategoryStore } from '@/stores/Category'
 const categoryStore = useCategoryStore()
-const categoryList = categoryStore.categoryList;
+const categoryList = categoryStore.categoryList;//获取全部分类数据
 onMounted(async () => {
-  if (categoryList.length === 0) {
+  if (categoryList.length === 0) {    //用户初始化时重新调用接口获取数据
     await categoryStore.getCategory(); // 调用 store 中的方法获取数据
   }
 })
@@ -13,17 +13,18 @@ onMounted(async () => {
 <template>
   <div class="home-category">
     <ul class="menu">
-      <li v-for="item in categoryStore.categoryList" :key="item.id">
+      <li v-for="item in categoryStore.categoryList" :key="item.id"> <!-- 遍历全部分类数据 -->
         <RouterLink to="/">
           {{ item.name }}
-          <el-icon v-if="item.children">
-            <ArrowRight />
+          <el-icon v-if="item.children"> <!-- 判断是否有弹层layer展示的数据 -->
+            <ArrowRight /> <!-- 增加箭头指示图标 -->
           </el-icon>
         </RouterLink>
         <!-- 弹层layer位置 -->
         <div class=" layer" v-if="item.children">
           <h4>分类推荐 <small>根据您的购买或浏览记录推荐</small></h4>
           <ul>
+            <!-- 渲染弹层layer -->
             <li v-for="i in item.children" :key="i.id">
               <router-link :to="`/detail/${i.id}`">
                 <img :src="i.picture" alt="" />

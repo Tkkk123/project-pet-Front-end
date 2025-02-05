@@ -16,10 +16,11 @@ const checkInfo = ref({}) // 订单对象
 const curAddress = ref({}) // 默认地址
 const selectedItems = ref([])
 const selectedData = ref(null)
-
+//获取订单收件人信息
 const getCheckInfo = async () => {
   const res = await getCheckInfoAPI();
   checkInfo.value = res.result;
+  //合并本地用户添加的收件人信息
   if (addressStore.$state.addresses) {
     const storedAddresses = addressStore.$state.addresses;
     storedAddresses.forEach(address => {
@@ -27,6 +28,7 @@ const getCheckInfo = async () => {
       checkInfo.value.userAddresses.push(address);
     });
   }
+  //默认展示第一条收件人信息
   const defaultAddress = checkInfo.value.userAddresses.find(item => item.isDefault === 0);
   curAddress.value = defaultAddress;
 }
@@ -44,6 +46,7 @@ const newAddress = reactive({
   contact: '',
   address: ''
 });
+//对添加的收件人数据进行简单校验
 const addressRules = {
   receiver: [
     { required: true, message: '请输入收货人姓名', trigger: 'blur' }
@@ -56,6 +59,7 @@ const addressRules = {
   ]
 };
 const addressForm = ref(null);
+//收件人信息校验无误执行添加本地收件人信息
 function Address() {
   const valid = addressForm.value.validate();
   if (valid) {
@@ -73,8 +77,10 @@ const switchAddress = (item) => {
   curAddress.value = item;
   showDialog.value = false
 }
+//执行下单结算时进行用户状态判断，登录可下单，非登录跳转到登录页面
 const createOrder = () => {
   const userStore = useUserStore()
+  //判断是否处于登录状态
   if (userStore.userInfo.token) {
     ElMessage({
       type: 'success',
@@ -99,7 +105,7 @@ const createOrder = () => {
 
 }
 
-
+//对选中的商品进行计算，精确到小数点后两位
 const calculateSelectedData = () => {
   if (route.query.selectedItems) {
     const itemsArray = JSON.parse(route.query.selectedItems)

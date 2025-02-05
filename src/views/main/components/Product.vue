@@ -2,21 +2,20 @@
 import Panel from './Panel.vue';
 import Card from './Card.vue';
 import { useCategoryStore } from '@/stores/Category';
-
 const categoryStore = useCategoryStore();
-const categoryList = categoryStore.categoryList; // 引用 Pinia store 中的数据
-
-
+const categoryList = categoryStore.categoryList; // 引用全部分类中的数据
 </script>
 
 <template>
   <div class="home-product">
+    <!-- 只渲染前两个标题 -->
     <Panel v-for="cate in categoryList.slice(0, 2)" :key="cate.id" :title="cate.name" :subTitle="cate.subName">
       <div class="box">
         <RouterLink class="cover" to="/">
           <img v-lazy="cate.picture" />
         </RouterLink>
         <ul class="goods-list">
+          <!-- 只渲染8张宠物卡片数据 -->
           <li v-for="card in cate.children.slice(0, 8)" :key="card.id">
             <Card :cards="card" />
           </li>

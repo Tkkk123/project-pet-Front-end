@@ -10,10 +10,7 @@ defineProps({
     type: String
   }
 })
-
 </script>
-
-
 <template>
   <div class="home-panel">
     <div class="container">

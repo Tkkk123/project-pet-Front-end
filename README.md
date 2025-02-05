@@ -1,29 +1,51 @@
-# project-pet
+# 宠物帮帮居商城 (Project-Pet)
 
-This template should help get you started developing with Vue 3 in Vite.
+基于 Vue 3 + Element Plus 开发的宠物商城项目
 
-## Recommended IDE Setup
+## 🚀 功能特点
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- 🛒 完整的购物车功能
+- 👤 用户登录注册系统
+- 🔄 订单管理系统
+- 📍 收货地址管理
+- 🖼️ 图片懒加载
+- 🌐 全局加载状态管理
 
-## Customize configuration
+## 🛠️ 技术栈
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- Vue 3 (Composition API)
+- Element Plus
+- Vue Router
+- Pinia
+- Axios
+- Less
+- Vite
 
-## Project Setup
+## 📋 主要功能模块
 
-```sh
-pnpm install
-```
+### 首页
 
-### Compile and Hot-Reload for Development
+- 轮播图展示
+- 宠物分类导航
+- 新品推荐
+- 商品展示
 
-```sh
-pnpm dev
-```
+### 商品详情
 
-### Compile and Minify for Production
+- 商品信息展示
+- SKU 选择(性别、颜色等)
+- 加入购物车
+- 商品数量选择
 
-```sh
-pnpm build
-```
+### 购物车
+
+- 商品列表管理
+- 数量修改
+- 价格计算
+- 结算功能
+
+### 用户中心
+
+- 个人信息管理
+- 订单管理
+- 收货地址管理

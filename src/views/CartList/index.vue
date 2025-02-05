@@ -5,9 +5,9 @@ import { ElMessage } from 'element-plus'
 const cartStore = useCartStore()
 const router = useRouter()
 
-// 单选回调
+// 勾选执行   selected布尔值：表示是否选中，item选中的对象
 const singleCheck = (item, selected) => {
-  // 除了 selected 补充一个用来筛选的参数 - skuId
+  // 除了 selected 补充用来筛选的参数 - item.id, item.sex, item.color
   cartStore.singleCheck(item.id, item.sex, item.color, selected)
 }
 
@@ -23,7 +23,7 @@ const countChange = (value, item) => {
 const allCheck = (selected) => {
   cartStore.allCheck(selected)
 }
-
+//下单结算执行
 const goToCheckout = () => {
   const selectedItems = cartStore.cartList.filter(item => item.selected)
   if (selectedItems.length > 0) {

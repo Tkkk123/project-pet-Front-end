@@ -1,6 +1,6 @@
 import { ElLoading } from "element-plus";
 let loadingInstance;
-
+//全局加载函数
 export function showLoading() {
   loadingInstance = ElLoading.service({
     lock: true,
@@ -8,6 +8,7 @@ export function showLoading() {
     background: "rgba(0, 0, 0, 0.7)",
   });
 }
+//在0.5秒后关闭全局加载
 export function hideLoading() {
   if (loadingInstance) {
     setInterval(() => {

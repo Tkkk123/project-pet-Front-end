@@ -7,10 +7,12 @@ const cartStore = useCartStore()  //调用已经加入购物车里的pinia数据
   <!-- 数据渲染 -->
   <div class="cart">
     <a class="curr" href="javascript:;">
+      <!-- 显示购物车图标以及加入购物的数量 -->
       <i class="iconfont icon-gouwuche"></i><em>{{ cartStore.cartList.length }}</em>
     </a>
     <div class="layer">
       <div class="list">
+        <!-- 加入购物车的数据渲染：图片，颜色，宠物名，性别，价格，数量 -->
         <div class="item" v-for="item in cartStore.cartList" :key="item.id">
           <RouterLink to="">
             <img :src="item.picture" alt="" />
@@ -35,6 +37,7 @@ const cartStore = useCartStore()  //调用已经加入购物车里的pinia数据
           <!-- 小数点后两位 -->
           <p>&yen; {{ cartStore.allPrice.toFixed(2) }} </p>
         </div>
+        <!-- 点击跳转到结算页面 -->
         <el-button size="large" type="primary" @click="$router.push('/cartlist')">去购物车结算</el-button>
       </div>
     </div>

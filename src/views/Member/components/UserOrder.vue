@@ -42,7 +42,6 @@ const fomartPayState = (payState) => {
     <el-tabs @tab-change="tabChange">
       <!-- tab切换 -->
       <el-tab-pane v-for="item in tabTypes" :key="item.name" :label="item.label" />
-
       <div class="main-container">
         <div class="holder-container" v-if="orderList.length === 0">
           <el-empty description="暂无订单数据" />
